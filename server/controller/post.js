@@ -23,8 +23,7 @@ const createNewPost = asyncHandler(async (req, res) => {
 });
 
 const getPosts = asyncHandler(async (req, res) => {
-  const { page, ...query } = req.query;
-  const response = await postService.getPostsService(page, query);
+  const response = await postService.getPostsService(req.query);
   return res.status(200).json(response);
 });
 
@@ -40,25 +39,9 @@ const deletePost = asyncHandler(async (req, res) => {
   return res.status(200).json(response);
 });
 
-const getPostLimit = asyncHandler(async (req, res) => {
-  const { page, ...queries } = req.query;
-  const response = await postService.getPostsLimitService(page, queries);
-  return res.status(200).json(response);
-});
-
-const getNewPosts = asyncHandler(async (req, res) => {
-  const response = await postService.getNewPostService();
-  return res.status(200).json(response);
-});
-
 const getPostsLimitUser = asyncHandler(async (req, res) => {
   const { id } = req.user;
-  const { page, ...queries } = req.query;
-  const response = await postService.getPostsLimitUserService(
-    page,
-    id,
-    queries
-  );
+  const response = await postService.getPostsLimitUserService(id, req.query);
   return res.status(200).json(response);
 });
 
@@ -84,8 +67,6 @@ module.exports = {
   getPosts,
   deletePost,
   getCurrentPort,
-  getPostLimit,
-  getNewPosts,
   getPostsLimitUser,
   updatePost,
 };

@@ -10,8 +10,6 @@ router.post(
   post.createNewPost
 );
 router.get("/", post.getPosts);
-router.get("/limit", post.getPostLimit);
-router.get("/new-post", post.getNewPosts);
 router.get("/limit-user", [verifyAccessToken], post.getPostsLimitUser);
 router.get("/:pid", post.getCurrentPort);
 router.delete("/:pid", [verifyAccessToken], post.deletePost);

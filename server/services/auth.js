@@ -38,7 +38,7 @@ const registerService = ({ phone, password, name, email }) =>
         if (newUser) {
           const htmlMail = `
             <div>
-              <img src="https://res.cloudinary.com/npctungadmin/image/upload/v1698664663/quan-ly-phong-tro/logo-phongtro_fjobvt.svg" alt='logo' />
+              <img src="https://res.cloudinary.com/npctungadmin/image/upload/v1698740242/quan-ly-phong-tro/logo-phongtro_ogykly.png" alt='logo' />
               <p>Chào bạn</p> <br />
               <p>
                 <span>bạn đang tiến hành đăng ký, mã xác nhận của bạn là: 
@@ -160,7 +160,7 @@ const forgotPasswordService = (email) =>
         user.save();
         const html = `
         <div>
-          <img src="https://res.cloudinary.com/npctungadmin/image/upload/v1696083922/quan-ly-ruou/logo_iyi91d.png" alt="logo" />
+          <img src="https://res.cloudinary.com/npctungadmin/image/upload/v1698740242/quan-ly-phong-tro/logo-phongtro_ogykly.png" alt="logo" />
           <p>Chào bạn</p> <br />
           <p>
             Xin vui lòng click vào link dưới đây để thay đổi mật khẩu của bạn.Link này sẽ hết hạn sau 15 phút kể từ bây giờ. 

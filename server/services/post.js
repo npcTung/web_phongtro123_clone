@@ -3,6 +3,7 @@ const generatedId = require("uuid").v4;
 const moment = require("moment");
 const generateDate = require("../ultils/generateDate");
 const cloudinary = require("cloudinary").v2;
+const { Op } = require("sequelize");
 
 const createNewPostService = (body, userId) =>
   new Promise(async (resolve, reject) => {
@@ -58,25 +59,34 @@ const createNewPostService = (body, userId) =>
     }
   });
 
-const getPostsService = () =>
+const getPostsService = ({ page, limit, order, title, ...query }) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.Post.findAll({
-        raw: true,
-        nest: true,
-        include: [
-          {
-            model: db.Attribute,
-            as: "attributes",
-            attributes: ["price", "acreage", "published", "hashtag"],
-          },
-          {
-            model: db.User,
-            as: "user",
-            attributes: ["name", "zalo", "phone"],
-          },
-        ],
-        attributes: { exclude: ["updatedAt"] },
+      const queries = { raw: true, nest: true };
+      const offset = !page || +page <= 1 ? 0 : +page - 1;
+      const fLimit = +limit || +process.env.LIMIT;
+      const attributes = { exclude: ["updatedAt"] };
+      const includes = [
+        {
+          model: db.Attribute,
+          as: "attributes",
+          attributes: ["price", "acreage", "published", "hashtag"],
+        },
+        {
+          model: db.User,
+          as: "user",
+          attributes: ["name", "zalo", "phone"],
+        },
+      ];
+      queries.offset = offset * fLimit;
+      queries.limit = fLimit;
+      queries.attributes = attributes;
+      queries.include = includes;
+      if (order) queries.order = [order];
+      if (title) query.title = { [Op.substring]: title };
+      const response = await db.Post.findAndCountAll({
+        where: query,
+        ...queries,
       });
       resolve({
         success: response ? true : false,
@@ -117,54 +127,6 @@ const getPostService = (pid) =>
     }
   });
 
-const getPostsLimitService = (page, { limitPost, order, ...query }) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      let offset = !page || +page <= 1 ? 0 : +page;
-      const queries = { ...query };
-      const limit = +limitPost || +process.env.LIMIT;
-      queries.limit = limit;
-      if (order) queries.order = [order];
-      const response = await db.Post.findAndCountAll({
-        where: query,
-        raw: true,
-        nest: true,
-        offset: offset * limit,
-        ...queries,
-        include: [
-          {
-            model: db.Attribute,
-            as: "attributes",
-            attributes: ["price", "acreage", "published", "hashtag"],
-          },
-          {
-            model: db.User,
-            as: "user",
-            attributes: ["name", "zalo", "phone", "avatar"],
-          },
-          {
-            model: db.Overview,
-            as: "overviews",
-          },
-        ],
-        attributes: [
-          "id",
-          "title",
-          "star",
-          "address",
-          "description",
-          "createdAt",
-        ],
-      });
-      resolve({
-        success: response ? true : false,
-        postData: response ? response : "Getting posts limit is failed.",
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
-
 const deletePostService = (pid) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -190,58 +152,38 @@ const deletePostService = (pid) =>
     }
   });
 
-const getNewPostService = () =>
+const getPostsLimitUserService = (
+  uid,
+  { page, limit, order, title, ...query }
+) =>
   new Promise(async (resolve, reject) => {
     try {
-      const response = await db.Post.findAll({
-        raw: true,
-        nest: true,
-        offset: 0,
-        order: [["createdAt", "DESC"]],
-        limit: +process.env.LIMIT,
-        include: [
-          {
-            model: db.Attribute,
-            as: "attributes",
-            attributes: ["price"],
-          },
-        ],
-        attributes: ["id", "title", "star", "createdAt"],
-      });
-      resolve({
-        success: response ? true : false,
-        newPostData: response ? response : "Getting new post is failed.",
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
-
-const getPostsLimitUserService = (page, userId, query) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      let offset = !page || +page <= 1 ? 0 : +page - 1;
-      const queries = { ...query, userId };
+      const queries = { raw: true, nest: true };
+      const offset = !page || +page <= 1 ? 0 : +page - 1;
+      const fLimit = +limit || +process.env.LIMIT;
+      const attributes = { exclude: ["updatedAt"] };
+      const includes = [
+        {
+          model: db.Attribute,
+          as: "attributes",
+          attributes: ["price", "acreage", "published", "hashtag"],
+        },
+        {
+          model: db.User,
+          as: "user",
+          attributes: ["name", "zalo", "phone"],
+        },
+      ];
+      queries.offset = offset * fLimit;
+      queries.limit = fLimit;
+      queries.attributes = attributes;
+      queries.include = includes;
+      if (order) queries.order = [order];
+      if (title) query.title = { [Op.substring]: title };
+      query.userId = uid;
       const response = await db.Post.findAndCountAll({
-        where: queries,
-        raw: true,
-        nest: true,
-        offset: offset * +process.env.LIMIT,
-        limit: +process.env.LIMIT,
-        order: [["createdAt", "DESC"]],
-        include: [
-          {
-            model: db.Attribute,
-            as: "attributes",
-            attributes: ["price", "acreage", "published", "hashtag"],
-          },
-          { model: db.User, as: "user", attributes: ["name", "zalo", "phone"] },
-          {
-            model: db.Overview,
-            as: "overviews",
-          },
-        ],
-        attributes: ["id", "title", "star", "address", "description"],
+        where: query,
+        ...queries,
       });
       resolve({
         success: response ? true : false,
@@ -316,8 +258,6 @@ module.exports = {
   getPostsService,
   deletePostService,
   getPostService,
-  getPostsLimitService,
-  getNewPostService,
   getPostsLimitUserService,
   updatePostService,
 };

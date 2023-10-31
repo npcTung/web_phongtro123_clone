@@ -1,27 +1,45 @@
-const services = require("../services/user");
+const user = require("../services/user");
 const asyncHandler = require("express-async-handler");
-const cloudinary = require("cloudinary").v2;
 
 const getCurrent = asyncHandler(async (req, res) => {
   const { id } = req.user;
-  const response = await services.getCurrent(id);
+  const response = await user.getCurrent(id);
   return res.status(200).json(response);
 });
 
 const updateUser = asyncHandler(async (req, res) => {
   const { id } = req.user;
-  const { name, phone, email } = req.body;
-  const data = { name, phone, email };
   if (req.file) {
-    data.avatar = req.file.path;
-    data.filenameAvatar = req.file.filename;
+    req.body.avatar = req.file.path;
+    req.body.filenameAvatar = req.file.filename;
   }
-  if (!(id && name && email && phone)) {
-    cloudinary.uploader.destroy(req.file.filename);
-    throw new Error("Missing input!");
-  }
-  const response = await services.updateUser(data, id);
+  const response = await user.updateUser(req.body, id);
   return res.status(200).json(response);
 });
 
-module.exports = { getCurrent, updateUser };
+const getAllUsers = asyncHandler(async (req, res) => {
+  const response = await user.getAllUsersService(req.query);
+  return res.status(200).json(response);
+});
+
+const deleteUser = asyncHandler(async (req, res) => {
+  const { uid } = req.params;
+  if (!uid) throw new Error("Missing input");
+  const response = await user.deleteUserService(uid);
+  return res.status(200).json(response);
+});
+
+const updateUserByAdmin = asyncHandler(async (req, res) => {
+  const { uid } = req.params;
+  if (!uid) throw new Error("Missing input");
+  const response = await user.updateUserByAdminService(uid, req.body);
+  return res.status(200).json(response);
+});
+
+module.exports = {
+  getCurrent,
+  updateUser,
+  getAllUsers,
+  deleteUser,
+  updateUserByAdmin,
+};
