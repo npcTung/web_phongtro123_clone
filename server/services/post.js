@@ -75,7 +75,7 @@ const getPostsService = ({ page, limit, order, title, ...query }) =>
         {
           model: db.User,
           as: "user",
-          attributes: ["name", "zalo", "phone"],
+          attributes: ["name", "zalo", "phone", "avatar", "isBlocked"],
         },
       ];
       queries.offset = offset * fLimit;
