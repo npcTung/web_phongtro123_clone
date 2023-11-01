@@ -7,7 +7,7 @@ const chothuephongtro = require("../data/chothuephongtro.json");
 const nhachothue = require("../data/nhachothue.json");
 const categotries = require("../data/categories");
 const slugify = require("slugify");
-const { categoryCode } = require("../ultils/common");
+const categoryCode = require("../ultils/common");
 
 const dataBody = [
   {

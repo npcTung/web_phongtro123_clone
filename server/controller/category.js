@@ -1,6 +1,6 @@
 const services = require("../services/category");
 const asyncHandler = require("express-async-handler");
-const { categoryCode } = require("../ultils/common");
+const categoryCode = require("../ultils/common");
 
 const getCategories = asyncHandler(async (req, res) => {
   const response = await services.getCategoriesSerivce();
