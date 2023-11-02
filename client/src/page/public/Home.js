@@ -1,7 +1,11 @@
 import React from "react";
-import { Province, PageHeader, Products } from "components";
+import { Province, PageHeader, Products, ItemSidebar } from "components";
+import { useSelector } from "react-redux";
+import RelatedPost from "components/products/RelatedPost";
 
 const Home = () => {
+  const { categories } = useSelector((state) => state.app);
+
   return (
     <div className="w-full flex flex-col gap-5">
       <PageHeader
@@ -13,7 +17,10 @@ const Home = () => {
       <Province />
       <div className="w-full grid grid-cols-10 gap-5">
         <Products />
-        <div className="col-span-3 rounded-md py-4">Sort</div>
+        <div className="col-span-3 flex flex-col gap-5">
+          <ItemSidebar content={categories} title="Danh sách cho thuê" />
+          <RelatedPost />
+        </div>
       </div>
     </div>
   );

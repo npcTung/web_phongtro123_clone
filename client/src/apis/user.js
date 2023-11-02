@@ -1,8 +1,7 @@
 import axiosConfig from "axiosConfig";
 
-export const apiGetProducts = (params) =>
+export const apiGetCurrent = () =>
   axiosConfig({
-    url: "/post",
+    url: "/user/current",
     method: "get",
-    params,
   });

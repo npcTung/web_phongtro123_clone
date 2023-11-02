@@ -91,7 +91,6 @@ const getPostsService = ({ page, limit, order, title, ...query }) =>
       resolve({
         success: response ? true : false,
         postData: response ? response : "Getting posts is failed.",
-        count: response.length || 0,
       });
     } catch (error) {
       reject(error);

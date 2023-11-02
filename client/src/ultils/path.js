@@ -10,6 +10,7 @@ const path = {
   ADMIN: "admin",
   // AUTH
   LOGIN: "login",
+  RESET_PASSWORD: "reset-password/:token",
 };
 
 export default path;

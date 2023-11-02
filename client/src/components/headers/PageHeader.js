@@ -7,7 +7,7 @@ const PageHeader = ({ header, subheader }) => {
       <Breadcrumbs />
       <div className="w-full flex flex-col gap-2">
         <h1 className="text-3xl font-bold">{header}</h1>
-        <span className="text-sm text-overlay50">{subheader}</span>
+        <span className="text-overlay50">{subheader}</span>
       </div>
     </div>
   );

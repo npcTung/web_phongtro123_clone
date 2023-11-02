@@ -29,3 +29,8 @@ export const formatTime = (createAt) => {
   moment.locale("vi");
   return moment(createAt).fromNow();
 };
+
+export const generateRange = (start, end) => {
+  const length = end + 1 - start;
+  return Array.from({ length }, (_, index) => start + index);
+};

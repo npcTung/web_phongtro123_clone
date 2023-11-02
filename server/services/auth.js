@@ -103,14 +103,14 @@ const loginService = ({ phone, password }) =>
         raw: true,
       });
       if (response && bcrypt.compareSync(password, response.password)) {
-        const { password, role, refreshToken, ...useData } = response;
+        const { password, role, refreshToken, ...userData } = response;
         const accessToken = generateAccessToken(response.id, role);
         const newRefreshToken = generateRefreshToken(response._id);
         await db.User.update(
           { refreshToken: newRefreshToken },
           { where: { id: response.id } }
         );
-        resolve({ success: true, accessToken, newRefreshToken, useData });
+        resolve({ success: true, accessToken, newRefreshToken, userData });
       } else throw new Error("Thông tin không hợp lệ!");
     } catch (err) {
       reject(err);
@@ -164,7 +164,7 @@ const forgotPasswordService = (email) =>
           <p>Chào bạn</p> <br />
           <p>
             Xin vui lòng click vào link dưới đây để thay đổi mật khẩu của bạn.Link này sẽ hết hạn sau 15 phút kể từ bây giờ. 
-              <a href=${process.env.URL_CLIENT}/reset-password/${resetToken}>Bấn vào đây</a>
+              <a href=${process.env.CLIENT_URL}/reset-password/${resetToken}>Bấn vào đây</a>
           </p>
           <p>Vui lòng hoàn thành xác nhận trong vòng 5 phút.</p>
           <p>Wine House</p>

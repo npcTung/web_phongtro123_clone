@@ -39,7 +39,7 @@ const ProductItem = ({ data }) => {
                   />
                 );
               })}
-          <span className="text-white bg-overlay70 rounded-md py-1 px-2 text-sm absolute bottom-2 left-2">
+          <span className="text-white bg-overlay50 rounded-md py-1 px-2 text-sm absolute bottom-2 left-2">
             {`${images.length} ảnh`}
           </span>
         </Link>
@@ -84,7 +84,7 @@ const ProductItem = ({ data }) => {
               data.address.split(",")[data.address.split(",").length - 2]
             }`}</span>
             <span className="capitalize text-sm opacity-60">
-              {formatTime(data.createAt)}
+              {formatTime(data.createdAt)}
             </span>
           </div>
         </div>

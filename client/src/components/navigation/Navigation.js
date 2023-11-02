@@ -4,10 +4,14 @@ import { NavLink } from "react-router-dom";
 import { createSlug } from "ultils/helpers";
 import path from "ultils/path";
 
-const Navigation = () => {
+const Navigation = ({ fixed }) => {
   const { categories } = useSelector((state) => state.app);
   return (
-    <div className="w-full bg-main-blue text-white h-10">
+    <div
+      className={`w-full bg-main-blue text-white h-10 ${
+        fixed && "fixed z-10 top-0 shadow-md"
+      }`}
+    >
       <div className="w-main mx-auto flex items-center h-full">
         <NavLink
           to={path.HOME}
