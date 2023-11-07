@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 
-const SortProduct = ({ sort, setSort }) => {
+const SortPost = ({ sort, setSort }) => {
   return (
     <div className="flex items-center gap-2 border-b border-main-red pb-4 px-4">
       <label className="label-text">Sắp xêp:</label>
@@ -28,4 +28,4 @@ const SortProduct = ({ sort, setSort }) => {
   );
 };
 
-export default memo(SortProduct);
+export default memo(SortPost);

@@ -5,6 +5,7 @@ import { store, persistor } from "store/redux";
 import App from "./App";
 import "./index.css";
 import "react-toastify/dist/ReactToastify.css";
+import "@splidejs/react-splide/css";
 import { BrowserRouter } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 

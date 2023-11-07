@@ -16,6 +16,7 @@ const {
   PiHeartStraight,
   GrAppsRounded,
   BsBoxArrowInLeft,
+  GrUserAdmin,
 } = icons;
 
 const Header = ({ navigate, dispatch }) => {
@@ -41,7 +42,11 @@ const Header = ({ navigate, dispatch }) => {
       <div className="flex items-center gap-5 capitalize">
         {isLoggedIn ? (
           <div className="flex items-center gap-5">
-            <div className="flex items-center gap-3 w-[250px] cursor-pointer mr-10">
+            <Link
+              to={`/${path.MEMBER}/${path.EDIT_ACCOUNT}`}
+              className="flex items-center gap-3 w-[250px] mr-10"
+              target="_blank"
+            >
               <img
                 src={currentData?.avatar || Avatar}
                 alt={currentData?.name}
@@ -57,7 +62,7 @@ const Header = ({ navigate, dispatch }) => {
                   title={`Mã tài khoản: ${currentData?.id}`}
                 >{`MTK: ${currentData?.id}`}</span>
               </div>
-            </div>
+            </Link>
             <div className="flex items-center gap-1 hover:underline cursor-pointer">
               <PiHeartStraight />
               <span>Yêu thích</span>
@@ -75,13 +80,22 @@ const Header = ({ navigate, dispatch }) => {
                       <Link
                         className="hover:underline flex items-center gap-2"
                         key={item?.id}
-                        to={item?.path}
+                        to={`/${path.MEMBER}/${item?.path}`}
+                        target="_blank"
                       >
                         {item?.icon}
                         {item?.text}
                       </Link>
                     );
                   })}
+                  <Link
+                    to={`/${path.ADMIN}`}
+                    className="hover:underline flex items-center gap-2"
+                    target="_blank"
+                  >
+                    <GrUserAdmin />
+                    Quản trị viên
+                  </Link>
                   <span
                     className="cursor-pointer hover:underline flex items-center gap-2"
                     onClick={() => {

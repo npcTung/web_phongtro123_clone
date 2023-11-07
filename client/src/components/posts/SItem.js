@@ -1,12 +1,12 @@
 import React, { memo } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { createSlug, formatTime } from "ultils/helpers";
+import { createSlug, formatMoney, formatTime } from "ultils/helpers";
 
 const indexs = [0];
 const SItem = ({ data }) => {
   const { categories } = useSelector((state) => state.app);
-  const image = JSON.parse(data.images);
+  const image = JSON.parse(data && data.images);
   const category = categories?.find(
     (el) => el.code === data.categoryCode
   ).value;
@@ -37,7 +37,9 @@ const SItem = ({ data }) => {
           </h3>
           <div className="flex items-center justify-between flex-auto gap-1">
             <span className="font-medium text-green-500 text-sm">
-              {data?.attributes?.price}
+              {`${formatMoney(
+                data?.attributes?.price.split("triệu/tháng")[0]
+              )} VNĐ`}
             </span>
             <span className="text-overlay40 text-sm">
               {formatTime(data?.createdAt)}

@@ -1,21 +1,27 @@
 import React, { memo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { createSlug, formatTime, renderStarFromNumber } from "ultils/helpers";
+import {
+  createSlug,
+  formatMoney,
+  formatTime,
+  renderStarFromNumber,
+} from "ultils/helpers";
 import NoPost from "assets/logo-image.png";
 import icons from "ultils/icons";
 import Avatar from "assets/user.png";
+import DOMPurify from "dompurify";
 
 const { PiHeartStraight, PiHeartStraightFill } = icons;
 
-const ProductItem = ({ data }) => {
+const PostItem = ({ data }) => {
   const { categories } = useSelector((state) => state.app);
   const [isHoverHeart, setIsHoverHeart] = useState(false);
   const category = categories?.find(
     (el) => el.code === data.categoryCode
   ).value;
-  const images = JSON.parse(data.images);
-  const description = JSON.parse(data.description);
+  const images = JSON.parse(data && data.images);
+  const description = JSON.parse(data && data.description);
 
   return (
     <div className="w-full p-4 border-b border-main-red grid grid-cols-10 gap-5">
@@ -73,7 +79,9 @@ const ProductItem = ({ data }) => {
         <div className="flex flex-col gap-1">
           <div className="flex gap-5">
             <span className="font-bold text-green-500">
-              {data.attributes.price}
+              {`${formatMoney(
+                data?.attributes?.price.split("triệu/tháng")[0]
+              )} VNĐ`}
             </span>
             <span>{data.attributes.acreage}</span>
           </div>
@@ -88,7 +96,19 @@ const ProductItem = ({ data }) => {
             </span>
           </div>
         </div>
-        <div className="text-sm line-clamp-4 text-overlay50">{description}</div>
+        {description?.length > 1 && (
+          <div className="text-sm line-clamp-4 text-overlay50">
+            {description}
+          </div>
+        )}
+        {description?.length === 1 && (
+          <div
+            className="text-sm flex flex-col gap-2 text-overlay50"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(description[0]),
+            }}
+          />
+        )}
         <div className="flex justify-between">
           <div className="flex gap-2 items-center">
             <img
@@ -122,4 +142,4 @@ const ProductItem = ({ data }) => {
   );
 };
 
-export default memo(ProductItem);
+export default memo(PostItem);

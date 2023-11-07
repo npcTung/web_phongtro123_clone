@@ -1,4 +1,4 @@
 export * from "./app";
-export * from "./products";
+export * from "./post";
 export * from "./user";
 export * from "./auth";

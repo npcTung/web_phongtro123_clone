@@ -60,7 +60,7 @@ const insertServices = () =>
             userId,
             overviewId,
             images: JSON.stringify(item?.images),
-            lable: item?.header?.class?.classType.trim(),
+            label: item?.header?.class?.classType.trim(),
             province: item?.header?.address?.split(",").slice(-1)[0].trim(),
           });
           await db.Attribute.create({

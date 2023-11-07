@@ -105,7 +105,7 @@ const loginService = ({ phone, password }) =>
       if (response && bcrypt.compareSync(password, response.password)) {
         const { password, role, refreshToken, ...userData } = response;
         const accessToken = generateAccessToken(response.id, role);
-        const newRefreshToken = generateRefreshToken(response._id);
+        const newRefreshToken = generateRefreshToken(response.id);
         await db.User.update(
           { refreshToken: newRefreshToken },
           { where: { id: response.id } }
@@ -127,7 +127,7 @@ const refreshAccessTokenService = (cookie) =>
       resolve({
         success: response ? true : false,
         newAccessToken: response
-          ? generateAccessToken(response._id, response.role)
+          ? generateAccessToken(response.id, response.role)
           : "Refresh token not matched",
       });
     } catch (error) {

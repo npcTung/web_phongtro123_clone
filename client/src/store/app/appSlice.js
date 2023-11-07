@@ -19,7 +19,6 @@ export const appSlice = createSlice({
     builder.addCase(actions.getCategories.pending, (state) => {
       state.isLoading = true;
     });
-
     builder.addCase(actions.getCategories.fulfilled, (state, action) => {
       state.isLoading = false;
       state.categories = action.payload;

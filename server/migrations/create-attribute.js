@@ -6,7 +6,6 @@ module.exports = {
       id: { allowNull: false, primaryKey: true, type: Sequelize.STRING },
       price: { type: Sequelize.STRING },
       acreage: { type: Sequelize.STRING },
-      published: { type: Sequelize.STRING },
       hashtag: { type: Sequelize.STRING },
       createdAt: {
         allowNull: false,

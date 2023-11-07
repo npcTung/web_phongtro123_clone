@@ -15,7 +15,7 @@ const InputForm = ({
   defaultValue,
 }) => {
   return (
-    <div className={`${wf && "w-full"} flex flex-col ${classDiv}`}>
+    <div className={`${wf ? "w-full" : "w-fit"} flex flex-col ${classDiv}`}>
       {label && (
         <label
           htmlFor={id}
@@ -31,9 +31,9 @@ const InputForm = ({
         disabled={disabled}
         placeholder={placeholder}
         defaultValue={defaultValue}
-        className={`input w-full bg-gray-100 ${classInput} ${
-          errors[id] && "input-error"
-        } placeholder:text-sm`}
+        className={`input input-bordered w-full ${
+          classInput ? classInput : "bg-gray-100"
+        } ${errors[id] && "input-error"} placeholder:text-sm`}
       />
       {errors[id] && (
         <small className="text-xs pl-2 pt-1 text-red-500">

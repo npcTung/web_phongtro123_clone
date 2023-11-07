@@ -1,6 +1,5 @@
 const db = require("../models");
 const generatedId = require("uuid").v4;
-const moment = require("moment");
 const generateDate = require("../ultils/generateDate");
 const cloudinary = require("cloudinary").v2;
 const { Op } = require("sequelize");
@@ -10,7 +9,7 @@ const createNewPostService = (body, userId) =>
     try {
       let attributesId = generatedId();
       let overviewId = generatedId();
-      let hashtag = `#${Math.floor(Math.random() * Math.pow(10, 6))}`;
+      let hashtag = Math.floor(Math.random() * Math.pow(10, 6));
       let currentDate = generateDate();
       let description = body.description?.split(",");
       const response = await db.Post.create({
@@ -31,17 +30,13 @@ const createNewPostService = (body, userId) =>
       if (response) {
         await db.Attribute.create({
           id: attributesId,
-          price:
-            +body.priceNumber < 1
-              ? `${+body.priceNumber * 1000000} VND/tháng`
-              : `${body.priceNumber} triệu/tháng`,
-          acreage: `${body.areaNumber} m2`,
-          published: moment(new Date()).format("DD/MM/YYYY"),
+          price: body.price,
+          acreage: body.acreage,
           hashtag,
         });
         await db.Overview.create({
           id: overviewId,
-          code: hashtag,
+          code: `#${hashtag}`,
           area: body.label,
           type: body?.category,
           target: body?.target,
@@ -70,7 +65,7 @@ const getPostsService = ({ page, limit, order, title, ...query }) =>
         {
           model: db.Attribute,
           as: "attributes",
-          attributes: ["price", "acreage", "published", "hashtag"],
+          attributes: ["price", "acreage", "hashtag"],
         },
         {
           model: db.User,
@@ -100,22 +95,36 @@ const getPostsService = ({ page, limit, order, title, ...query }) =>
 const getPostService = (pid) =>
   new Promise(async (resolve, reject) => {
     try {
+      const queries = { raw: true, nest: true };
+      const includes = [
+        {
+          model: db.Attribute,
+          as: "attributes",
+          attributes: ["price", "acreage", "hashtag"],
+        },
+        {
+          model: db.User,
+          as: "user",
+          attributes: ["name", "zalo", "phone"],
+        },
+        {
+          model: db.Overview,
+          as: "overviews",
+          attributes: [
+            "code",
+            "area",
+            "type",
+            "target",
+            "bonus",
+            "created",
+            "expired",
+          ],
+        },
+      ];
+      queries.include = includes;
       const response = await db.Post.findOne({
         where: { id: pid },
-        raw: true,
-        nest: true,
-        include: [
-          {
-            model: db.Attribute,
-            as: "attributes",
-            attributes: ["price", "acreage", "published", "hashtag"],
-          },
-          {
-            model: db.User,
-            as: "user",
-            attributes: ["name", "zalo", "phone"],
-          },
-        ],
+        ...queries,
       });
       resolve({
         success: response ? true : false,
@@ -130,15 +139,14 @@ const deletePostService = (pid) =>
   new Promise(async (resolve, reject) => {
     try {
       const post = await db.Post.findOne({ where: { id: pid } });
+      const images = JSON.parse(
+        post && post.fileNameImages && post.fileNameImages
+      );
       const response = await db.Post.destroy({
         where: { id: pid },
       });
       if (response && post) {
-        const image = await db.Image.destroy({ where: { id: post.imagesId } });
-        if (image)
-          cloudinary.api.delete_resources(
-            post.images.fileNameImages?.map((el) => el)
-          );
+        cloudinary.api.delete_resources(images?.map((el) => el));
         await db.Attribute.destroy({ where: { id: post.attributesId } });
         await db.Overview.destroy({ where: { id: post.overviewId } });
       }
@@ -165,12 +173,17 @@ const getPostsLimitUserService = (
         {
           model: db.Attribute,
           as: "attributes",
-          attributes: ["price", "acreage", "published", "hashtag"],
+          attributes: ["price", "acreage", "hashtag"],
         },
         {
           model: db.User,
           as: "user",
-          attributes: ["name", "zalo", "phone"],
+          attributes: ["name", "zalo", "phone", "avatar", "isBlocked"],
+        },
+        {
+          model: db.Overview,
+          as: "overviews",
+          attributes: ["created", "expired", "target"],
         },
       ];
       queries.offset = offset * fLimit;
@@ -210,9 +223,7 @@ const updatePostService = (pid, uid, { ...body }) =>
             description: JSON.stringify(description) || null,
             images: body.images || null,
             fileNameImages: body.fileNameImages || null,
-            province: body?.province?.includes("Thành phố")
-              ? body?.province?.replace("Thành phố", "")
-              : body?.province?.replace("Tỉnh", ""),
+            province: body?.province,
             lable: body?.label || null,
           },
           { where: { id: pid } }
@@ -220,11 +231,8 @@ const updatePostService = (pid, uid, { ...body }) =>
         if (response) {
           await db.Attribute.update(
             {
-              price:
-                +body.priceNumber < 1
-                  ? `${+body.priceNumber * 1000000} VND/tháng`
-                  : `${body.priceNumber} triệu/tháng`,
-              acreage: `${body.areaNumber} m2`,
+              price: body.price,
+              acreage: `${body.acreage} m2`,
             },
             { where: { id: attributesId } }
           );

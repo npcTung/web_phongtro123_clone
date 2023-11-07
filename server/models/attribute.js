@@ -19,7 +19,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       price: DataTypes.STRING,
       acreage: DataTypes.STRING,
-      published: DataTypes.STRING,
       hashtag: DataTypes.STRING,
     },
     { sequelize, modelName: "Attribute" }

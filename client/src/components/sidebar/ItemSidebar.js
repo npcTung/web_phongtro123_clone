@@ -15,7 +15,7 @@ const ItemSidebar = ({ title, content }) => {
           content.map((item) => {
             return (
               <NavLink
-                to={`${createSlug(item.value)}`}
+                to={`/${createSlug(item.value)}`}
                 key={item.code}
                 className={({ isActive }) =>
                   `flex gap-2 items-center border-b border-dashed ${

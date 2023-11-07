@@ -15,7 +15,7 @@ module.exports = {
       overviewId: { type: Sequelize.STRING },
       images: { type: Sequelize.TEXT("long") },
       fileNameImages: { type: Sequelize.TEXT("long") },
-      lable: { type: Sequelize.STRING },
+      label: { type: Sequelize.STRING },
       province: { type: Sequelize.STRING },
       createdAt: {
         allowNull: false,
