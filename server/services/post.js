@@ -38,7 +38,7 @@ const createNewPostService = (body, userId) =>
           id: overviewId,
           code: `#${hashtag}`,
           area: body.label,
-          type: body?.category,
+          type: body?.type,
           target: body?.target,
           bonus: "Tin thường",
           created: currentDate.today,
@@ -232,14 +232,14 @@ const updatePostService = (pid, uid, { ...body }) =>
           await db.Attribute.update(
             {
               price: body.price,
-              acreage: `${body.acreage} m2`,
+              acreage: body.acreage,
             },
             { where: { id: attributesId } }
           );
           await db.Overview.update(
             {
               area: body.label,
-              type: body?.category,
+              type: body?.type,
               target: body?.target,
             },
             { where: { id: overviewId } }

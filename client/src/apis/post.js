@@ -31,3 +31,10 @@ export const apiDeletePost = (pid) =>
     url: "/post/" + pid,
     method: "delete",
   });
+
+export const apiUpdatePost = (pid, data) =>
+  axiosConfig({
+    url: "/post/" + pid,
+    method: "put",
+    data,
+  });

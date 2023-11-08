@@ -27,6 +27,7 @@ const CreatePost = ({ dispatch }) => {
   const { categories } = useSelector((state) => state.app);
   const { currentData } = useSelector((state) => state.user);
   const [preview, setPreview] = useState({ images: [] });
+  const [address, setAddress] = useState(null);
   const {
     handleSubmit,
     register,
@@ -61,44 +62,48 @@ const CreatePost = ({ dispatch }) => {
     reset();
     setPayload(null);
     setPreview({ images: [] });
+    setAddress(null);
   };
 
   const handleCreatePost = async (data) => {
     const invalids = validate(payload, setInvalidFields);
     if (data.number || data.district || data.province)
-      data.address = `Địa chỉ: ${
-        watch("number") ? `${watch("number")}, ` : ""
-      }${watch("ward") ? `${watch("ward").split(",")[1]}` : ""}${
-        watch("district") ? `${watch("district").split(",")[1]}, ` : ""
-      }${watch("province") ? `${watch("province").split(",")[1]}` : ""}`;
+      data.address = `Địa chỉ: ${address?.number ? `${address?.number},` : ""}${
+        address?.ward ? `${address?.ward},` : ""
+      }${address?.district ? `${address?.district},` : ""}${
+        address?.province ? `${address?.province}` : ""
+      }`;
     if (invalids === 0) {
       const finalPayload = { ...data, ...payload };
-      finalPayload.categoryCode = data.category.split(",")[0];
-      finalPayload.province = data.province.split(",")[1];
-      finalPayload.label = `${data.category.split(",")[1]} ${
-        data.district.split(",")[1]
-      }`;
-      finalPayload.target = data.target.split(",")[1];
-      finalPayload.category = data.category.split(",")[1];
+      finalPayload.categoryCode = data.category;
+      finalPayload.province = address?.province;
+      finalPayload.label = `${
+        categories?.find((el) => el.code === data.category).value
+      } ${address?.district}`;
+      finalPayload.target = data.target;
+      finalPayload.type = categories?.find(
+        (el) => el.code === data.category
+      ).value;
       delete finalPayload.name;
       delete finalPayload.phone;
       delete finalPayload.ward;
       delete finalPayload.district;
-      console.log(finalPayload);
-      // const formData = new FormData();
-      // for (let i of Object.entries(finalPayload)) formData.append(i[0], i[1]);
-      // if (finalPayload.images)
-      //   for (let image of finalPayload.images) formData.append("images", image);
-      // dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
-      // const response = await apis.apiCreatePost(formData);
-      // dispatch(showModal({ isShowModal: false, modalChildren: null }));
-      // if (response.success) {
-      //   toast.success("Thêm thông tin phòng trọn mới thành công!");
-      //   resetData();
-      // } else {
-      //   toast.error(response.mes);
-      //   resetData();
-      // }
+      delete finalPayload.category;
+      delete finalPayload.number;
+      const formData = new FormData();
+      for (let i of Object.entries(finalPayload)) formData.append(i[0], i[1]);
+      if (finalPayload.images)
+        for (let image of finalPayload.images) formData.append("images", image);
+      dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
+      const response = await apis.apiCreatePost(formData);
+      dispatch(showModal({ isShowModal: false, modalChildren: null }));
+      if (response.success) {
+        toast.success("Thêm thông tin phòng trọn mới thành công!");
+        resetData();
+      } else {
+        toast.error(response.mes);
+        resetData();
+      }
     }
   };
 
@@ -125,6 +130,16 @@ const CreatePost = ({ dispatch }) => {
   };
 
   useEffect(() => {
+    if (watch("images")?.length > 0) handlePreviewImages(watch("images"));
+  }, [watch("images")]);
+
+  useEffect(() => {
+    fetchProvinces();
+    if (watch("province")) fetchDistrict(watch("province"));
+    if (watch("district")) fetchWard(watch("district"));
+  }, [watch("province"), watch("district")]);
+
+  useEffect(() => {
     const province = provincesData?.find(
       (el) => el.province_id === watch("province")
     )?.province_name;
@@ -134,22 +149,13 @@ const CreatePost = ({ dispatch }) => {
     const ward = wardData?.find(
       (el) => el.ward_id === watch("ward")
     )?.ward_name;
-    reset({
-      address: `${watch("number") ? watch("number") + "," : ""}${
-        ward ? ward + "," : ""
-      }${district ? district + "," : ""}${province ? province + "," : ""}`,
+    setAddress({
+      number: watch("number") || "",
+      province: province || "",
+      district: district || "",
+      ward: ward || "",
     });
-  }, [districtData]);
-
-  useEffect(() => {
-    if (watch("images")?.length > 0) handlePreviewImages(watch("images"));
-  }, [watch("images")]);
-
-  useEffect(() => {
-    fetchProvinces();
-    if (watch("province")) fetchDistrict(watch("province"));
-    if (watch("district")) fetchWard(watch("district"));
-  }, [watch("province"), watch("district")]);
+  }, [watch("number"), watch("province"), watch("district"), watch("ward")]);
 
   return (
     <div className="w-full flex flex-col gap-0 py-5 pr-5">
@@ -215,11 +221,11 @@ const CreatePost = ({ dispatch }) => {
             wf
             disabled
             classInput={"bg-white"}
-            // defaultValue={`${watch("number") ? `${watch("number")}, ` : ""}${
-            //   watch("ward") ? `${watch("ward").split(",")[1]}` : ""
-            // }${
-            //   watch("district") ? `${watch("district").split(",")[1]}, ` : ""
-            // }${watch("province") ? `${watch("province").split(",")[1]}` : ""}`}
+            defaultValue={`${address?.number ? `${address?.number},` : ""}${
+              address?.ward ? `${address?.ward},` : ""
+            }${address?.district ? `${address?.district},` : ""}${
+              address?.province ? `${address?.province}` : ""
+            }`}
           />
         </div>
         <div className="flex flex-col gap-5">
@@ -289,7 +295,7 @@ const CreatePost = ({ dispatch }) => {
               register={register}
               validate={{ required: "Điền thông tin bắt buộc." }}
               errors={errors}
-              options={targetData.map((el, idx) => ({ code: idx, value: el }))}
+              options={targetData.map((el) => ({ code: el, value: el }))}
             />
           </div>
         </div>

@@ -44,7 +44,9 @@ const Post = ({ data }) => {
         </div>
         <div className="flex items-center gap-1 text-overlay30">
           <TbBoxModel2Off />
-          <span className="text-black">{data?.attributes?.acreage}</span>
+          <span className="text-black">
+            {data?.attributes?.acreage.split("m2")[0]} m2
+          </span>
         </div>
         <div className="flex items-center gap-1 text-overlay30">
           <BiTime />

@@ -83,7 +83,7 @@ const PostItem = ({ data }) => {
                 data?.attributes?.price.split("triệu/tháng")[0]
               )} VNĐ`}
             </span>
-            <span>{data.attributes.acreage}</span>
+            <span>{data.attributes.acreage?.split("m2")[0]} m2</span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm">{`${

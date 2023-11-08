@@ -28,6 +28,7 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
   const { categories } = useSelector((state) => state.app);
   const { currentData } = useSelector((state) => state.user);
   const [preview, setPreview] = useState({ images: [] });
+  const [address, setAddress] = useState(null);
   const {
     handleSubmit,
     register,
@@ -62,15 +63,16 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
     reset();
     setPayload(null);
     setPreview({ images: [] });
+    setAddress(null);
   };
 
   const handleUpdatePost = (data) => {
     // const invalids = validate(payload, setInvalidFields);
     if (data.number || data.district || data.province)
-      data.address = `Địa chỉ: ${watch("number") ? `${watch("number")},` : ""}${
-        watch("ward") ? `${watch("ward").split(",")[1]},` : ""
-      }${watch("district") ? `${watch("district").split(",")[1]},` : ""}${
-        watch("province") ? `${watch("province").split(",")[1]}` : ""
+      data.address = `Địa chỉ: ${address?.number ? `${address?.number},` : ""}${
+        address?.ward ? `${address?.ward},` : ""
+      }${address?.district ? `${address?.district},` : ""}${
+        address?.province ? `${address?.province}` : ""
       }`;
     // if (invalids === 0) {
     const finalPayload = { ...data, payload };
@@ -101,12 +103,15 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
   useEffect(() => {
     const dataAddress = dataPost?.address?.split(":");
     const description = JSON.parse(dataPost && dataPost?.description);
+    const province = provincesData?.find(
+      (el) => el.province_name === dataPost?.province
+    )?.province_id;
     reset({
       title: dataPost?.title,
       number: dataAddress[1]?.split(",")[0],
       price: dataPost?.attributes?.price.split("triệu/tháng")[0],
       acreage: dataPost?.attributes?.acreage.split("m2")[0],
-      province: dataPost?.province,
+      province,
       target: dataPost?.overviews?.target,
       category: dataPost?.categoryCode,
     });
@@ -122,14 +127,28 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
   }, [watch("images")]);
 
   useEffect(() => {
-    const province_id = watch("province")?.split(",")[0];
-    const district_id = watch("district")?.split(",")[0];
     fetchProvinces();
-    if (province_id) fetchDistrict(province_id);
-    if (district_id) fetchWard(district_id);
+    if (watch("province")) fetchDistrict(watch("province"));
+    if (watch("district")) fetchWard(watch("district"));
   }, [watch("province"), watch("district")]);
 
-  console.log(watch("target"));
+  useEffect(() => {
+    const province = provincesData?.find(
+      (el) => el.province_id === watch("province")
+    )?.province_name;
+    const district = districtData?.find(
+      (el) => el.district_id === watch("district")
+    )?.district_name;
+    const ward = wardData?.find(
+      (el) => el.ward_id === watch("ward")
+    )?.ward_name;
+    setAddress({
+      number: watch("number") || "",
+      province: province || "",
+      district: district || "",
+      ward: ward || "",
+    });
+  }, [watch("number"), watch("province"), watch("district"), watch("ward")]);
 
   return (
     <div
@@ -208,12 +227,10 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
               wf
               disabled
               classInput={"bg-white"}
-              defaultValue={`${watch("number") ? `${watch("number")}, ` : ""}${
-                watch("ward") ? `${watch("ward").split(",")[1]}` : ""
-              }${
-                watch("district") ? `${watch("district").split(",")[1]}, ` : ""
-              }${
-                watch("province") ? `${watch("province").split(",")[1]}` : ""
+              defaultValue={`${address?.number ? `${address?.number},` : ""}${
+                address?.ward ? `${address?.ward},` : ""
+              }${address?.district ? `${address?.district},` : ""}${
+                address?.province ? `${address?.province}` : ""
               }`}
             />
           </div>
