@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import path from "ultils/path";
-import { Admin } from "page/admin";
+import { Admin, DashBoard, ManagePostAdmin, ManageUser } from "page/admin";
 import { Account, CreatePost, ManagePost, Member } from "page/member";
 import { Contact, DetailPost, Home, Posts, Public } from "page/public";
 import { Login, ResetPassword } from "page/auth";
@@ -40,7 +40,11 @@ function App({ dispatch }) {
         </Route>
         <Route path={path.LOGIN} element={<Login />} />
         <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
-        <Route path={path.ADMIN} element={<Admin />}></Route>
+        <Route path={path.ADMIN} element={<Admin />}>
+          <Route path={path.DASH_BOARD} element={<DashBoard />} />
+          <Route path={path.MANAGE_USER} element={<ManageUser />} />
+          <Route path={path.MANAGE_POST} element={<ManagePostAdmin />} />
+        </Route>
         <Route path={path.MEMBER} element={<Member />}>
           <Route path={path.EDIT_ACCOUNT} element={<Account />} />
           <Route path={path.ALL} element={<ManagePost />} />

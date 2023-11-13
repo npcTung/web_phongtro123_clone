@@ -1,32 +1,26 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { PageHeader, Pagination, UpdatePost } from "components";
+import { PageHeader, Pagination } from "components";
 import * as apis from "apis";
-import { useSearchParams } from "react-router-dom";
 import icons from "ultils/icons";
 import NoPost from "assets/no-product.png";
-import Post from "assets/logo-image.png";
-import { formatMoney } from "ultils/helpers";
-import withBase from "hocs/withBase";
-import { showModal } from "store/app/appSlice";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { formatMoney } from "ultils/helpers";
+import Post from "assets/logo-image.png";
+import moment from "moment";
 
-const {
-  RiDeleteBin6Line,
-  BiSolidMessageSquareEdit,
-  FaArrowUpWideShort,
-  FaArrowDownShortWide,
-} = icons;
+const { RiDeleteBin6Line, FaArrowUpWideShort, FaArrowDownShortWide } = icons;
 
-const ManagePost = ({ dispatch }) => {
+const ManagePost = () => {
+  const [postAll, setPostAll] = useState(null);
   const [params] = useSearchParams();
-  const [postsData, setPostsData] = useState(null);
   const [update, setUpdate] = useState(false);
   const [createdAt, setCreatedAt] = useState(false);
   const [title, setTitle] = useState(null);
 
-  const fetchProsts = async (queries) => {
-    const response = await apis.apiGetPostsLimitUser(queries);
-    if (response.success) setPostsData(response.postAdminData);
+  const handelPostAll = async (queries) => {
+    const response = await apis.apiGetPosts(queries);
+    if (response.success) setPostAll(response.postData);
   };
 
   const rerender = useCallback(() => {
@@ -51,14 +45,15 @@ const ManagePost = ({ dispatch }) => {
     else delete queries.title;
     if (createdAt) queries.order = ["createdAt", "DESC"];
     else queries.order = ["createdAt", "ASC"];
-    fetchProsts(queries);
-  }, [params, update, title, createdAt]);
+    handelPostAll(queries);
+    window.scrollTo(0, 0);
+  }, [params, update, createdAt, title]);
 
   return (
-    <div className="w-full h-screen flex flex-col gap-0 py-5 pr-5">
+    <div className="w-full flex flex-col gap-0 py-5 pr-5">
       <PageHeader
-        category={"quản lý người dùng"}
-        header={"Quản lý tin đăng"}
+        category={"Quản trị viên"}
+        header={"Quản lý tin đăng của người dùng"}
         fixed
       />
       <div className="w-full h-[93px]"></div>
@@ -80,7 +75,7 @@ const ManagePost = ({ dispatch }) => {
         />
       </div>
       <div className="w-full pt-5">
-        {postsData?.count > 0 ? (
+        {postAll?.count > 0 ? (
           <table className="table table-zebra capitalize bg-white shadow-md">
             <thead className="table-header-group text-black">
               <tr>
@@ -88,19 +83,17 @@ const ManagePost = ({ dispatch }) => {
                 <th>ảnh đại diện</th>
                 <th className="w-[200px]">tiêu đề</th>
                 <th>giá</th>
+                <th>Người đăng</th>
                 <th>ngày bắt đầu</th>
                 <th>ngày hết hạn</th>
+                <th>Ngày đăng</th>
                 <th>trạng thái</th>
               </tr>
             </thead>
             <tbody>
-              {postsData?.rows?.map((el) => (
+              {postAll?.rows?.map((el) => (
                 <tr key={el.id}>
-                  <td>{`#${
-                    el?.attributes?.hashtag?.split("#")?.length > 1
-                      ? el?.attributes?.hashtag?.split("#")[1]
-                      : el?.attributes?.hashtag?.split("#")[0]
-                  }`}</td>
+                  <td>{`#${el?.attributes?.hashtag}`}</td>
                   <td>
                     <img
                       src={JSON.parse(el?.images)[0] || Post}
@@ -113,29 +106,33 @@ const ManagePost = ({ dispatch }) => {
                       {el?.title?.toLowerCase()}
                     </span>
                   </td>
-                  <td>{`${formatMoney(
-                    el?.attributes?.price.split("triệu/tháng")[0]
-                  )} VNĐ`}</td>
-                  <td>{el?.overviews?.created}</td>
-                  <td>{el?.overviews?.expired}</td>
                   <td>
-                    <span className="flex gap-2 text-lg">
-                      <span
-                        className="p-2 bg-yellow-400 shadow-lg text-white rounded-md cursor-pointer"
-                        title="Sửa sản phẩm"
-                        onClick={() =>
-                          dispatch(
-                            showModal({
-                              isShowModal: true,
-                              modalChildren: (
-                                <UpdatePost dataPost={el} rerender={rerender} />
-                              ),
-                            })
-                          )
-                        }
-                      >
-                        <BiSolidMessageSquareEdit />
-                      </span>
+                    <span className="whitespace-nowrap line-clamp-1">{`${formatMoney(
+                      el?.attributes?.price.split("triệu/tháng")[0]
+                    )} VNĐ`}</span>
+                  </td>
+                  <td>
+                    <span className="whitespace-nowrap line-clamp-1">
+                      {el?.user?.name}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="whitespace-nowrap line-clamp-1">
+                      {el?.overviews?.created}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="whitespace-nowrap line-clamp-1">
+                      {el?.overviews?.expired}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="whitespace-nowrap line-clamp-1">
+                      {moment(el?.createdAt).format("DD/MM/YYYY HH:mm:ss")}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="flex items-center justify-center">
                       <span
                         className="p-2 bg-main-red shadow-lg text-white rounded-md cursor-pointer"
                         title="Xóa sản phẩm"
@@ -143,14 +140,14 @@ const ManagePost = ({ dispatch }) => {
                       >
                         <RiDeleteBin6Line />
                       </span>
-                    </span>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         ) : (
-          <div className="w-full h-[755px] p-3 shadow-sm rounded-md bg-white">
+          <div className="w-full p-3 shadow-sm rounded-md bg-white">
             <img
               src={NoPost}
               alt="No Post"
@@ -158,9 +155,9 @@ const ManagePost = ({ dispatch }) => {
             />
           </div>
         )}
-        {postsData?.count > 12 && (
+        {postAll?.count > 12 && (
           <div className="bg-white shadow-sm mt-5 w-full p-2 rounded-full">
-            <Pagination limit={12} totalCount={postsData?.count} />
+            <Pagination limit={12} totalCount={postAll?.count} />
           </div>
         )}
       </div>
@@ -168,4 +165,4 @@ const ManagePost = ({ dispatch }) => {
   );
 };
 
-export default withBase(ManagePost);
+export default ManagePost;

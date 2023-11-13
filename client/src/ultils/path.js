@@ -13,6 +13,8 @@ const path = {
   MANAGE_POST: "quan-ly-bai-dang",
   // ADMIN
   ADMIN: "admin",
+  DASH_BOARD: "dash-board",
+  MANAGE_USER: "quan-ly-tai-khoan",
   // AUTH
   LOGIN: "login",
   RESET_PASSWORD: "reset-password/:token",

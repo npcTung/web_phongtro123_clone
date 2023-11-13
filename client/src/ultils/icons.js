@@ -3,7 +3,11 @@ import {
   PiHeartStraightFill,
   PiHashLight,
 } from "react-icons/pi";
-import { AiOutlineUserAdd, AiOutlinePlusCircle } from "react-icons/ai";
+import {
+  AiOutlineUserAdd,
+  AiOutlinePlusCircle,
+  AiOutlineDashboard,
+} from "react-icons/ai";
 import { IoIosLogIn } from "react-icons/io";
 import { MdOutlineKeyboardArrowRight, MdOutlineClear } from "react-icons/md";
 import {
@@ -16,7 +20,11 @@ import {
 } from "react-icons/bs";
 import { GrNext, GrAppsRounded, GrUserAdmin } from "react-icons/gr";
 import { FaClipboardList, FaUserCircle, FaUpload } from "react-icons/fa";
-import { FaLocationDot } from "react-icons/fa6";
+import {
+  FaLocationDot,
+  FaArrowUpWideShort,
+  FaArrowDownShortWide,
+} from "react-icons/fa6";
 import { IoPricetagsOutline } from "react-icons/io5";
 import { TbBoxModel2Off } from "react-icons/tb";
 import { BiTime, BiSolidMessageSquareEdit } from "react-icons/bi";
@@ -53,6 +61,9 @@ const icons = {
   FaUpload,
   RiDeleteBin6Line,
   BiSolidMessageSquareEdit,
+  AiOutlineDashboard,
+  FaArrowUpWideShort,
+  FaArrowDownShortWide,
 };
 
 export default icons;

@@ -1,6 +1,8 @@
 import icons from "./icons";
+import path from "./path";
 
-const { BsFillPencilFill, FaClipboardList, FaUserCircle } = icons;
+const { BsFillPencilFill, FaClipboardList, FaUserCircle, AiOutlineDashboard } =
+  icons;
 
 export const location = [
   {
@@ -92,6 +94,27 @@ export const menuManage = [
     id: 3,
     text: "Thông tin tài khoản",
     path: "sua-thong-tin-ca-nhan",
+    icon: <FaUserCircle />,
+  },
+];
+
+export const menuManageAdmin = [
+  {
+    id: 1,
+    text: "Bảng điều khiển",
+    path: path.DASH_BOARD,
+    icon: <AiOutlineDashboard />,
+  },
+  {
+    id: 2,
+    text: "Quản lý tin đăng",
+    path: path.MANAGE_POST,
+    icon: <FaClipboardList />,
+  },
+  {
+    id: 3,
+    text: "Quản lý tài khoản",
+    path: path.MANAGE_USER,
     icon: <FaUserCircle />,
   },
 ];

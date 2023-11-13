@@ -44,15 +44,15 @@ const Header = ({ navigate, dispatch }) => {
           <div className="flex items-center gap-5">
             <Link
               to={`/${path.MEMBER}/${path.EDIT_ACCOUNT}`}
-              className="flex items-center gap-3 w-[250px] mr-10"
+              className="flex items-center gap-3 mr-10"
               target="_blank"
             >
               <img
                 src={currentData?.avatar || Avatar}
                 alt={currentData?.name}
-                className="w-[40px] h-[40px] object-contain rounded-full p-1 border border-green-500"
+                className="w-[40px] h-[40px] object-cover rounded-full p-1 border border-green-500"
               />
-              <div className="flex flex-col">
+              <div className="flex flex-col w-[200px]">
                 <span
                   className="line-clamp-1"
                   title={currentData?.name}
@@ -88,14 +88,16 @@ const Header = ({ navigate, dispatch }) => {
                       </Link>
                     );
                   })}
-                  <Link
-                    to={`/${path.ADMIN}`}
-                    className="hover:underline flex items-center gap-2"
-                    target="_blank"
-                  >
-                    <GrUserAdmin />
-                    Quản trị viên
-                  </Link>
+                  {+currentData?.role === 2002 && (
+                    <Link
+                      to={`/${path.ADMIN}/${path.DASH_BOARD}`}
+                      className="hover:underline flex items-center gap-2"
+                      target="_blank"
+                    >
+                      <GrUserAdmin />
+                      Quản trị viên
+                    </Link>
+                  )}
                   <span
                     className="cursor-pointer hover:underline flex items-center gap-2"
                     onClick={() => {
@@ -128,10 +130,14 @@ const Header = ({ navigate, dispatch }) => {
             </span>
           </>
         )}
-        <span className="flex gap-1 items-center hover:underline transition-all p-2 bg-main-red text-white rounded-md shadow-md cursor-pointer">
+        <Link
+          to={`/${path.MEMBER}/${path.CREATE_POST}`}
+          target="_blank"
+          className="flex gap-1 items-center hover:underline transition-all p-2 bg-main-red text-white rounded-md shadow-md cursor-pointer"
+        >
           <span>đăng tin mới</span>
           <AiOutlinePlusCircle />
-        </span>
+        </Link>
       </div>
     </div>
   );

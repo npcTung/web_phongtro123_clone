@@ -106,7 +106,7 @@ const insertServices = () =>
           });
         });
       });
-      resolve("Done.");
+      resolve("Done Post.");
     } catch (err) {
       reject(err);
     }
@@ -127,7 +127,7 @@ const insertCategoryServices = () =>
       const promise = [];
       for (let cate of categotries) promise.push(fn(cate));
       await Promise.all(promise);
-      resolve("Done.");
+      resolve("Done Categories.");
     } catch (error) {
       reject(error);
     }

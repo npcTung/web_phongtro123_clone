@@ -11,6 +11,7 @@ const Select = ({
   wf,
   classSelect,
   classDiv,
+  disabled,
 }) => {
   return (
     <div className={`${wf ? "w-full" : "w-fit"} flex flex-col ${classDiv}`}>
@@ -26,6 +27,7 @@ const Select = ({
         className={`select select-bordered ${classSelect} ${
           errors[id] && "select-error"
         } w-full`}
+        disabled={disabled}
       >
         <option value={""}>Choses option</option>
         {options?.map((el) => (

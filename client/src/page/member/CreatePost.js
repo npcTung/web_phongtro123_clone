@@ -159,8 +159,12 @@ const CreatePost = ({ dispatch }) => {
 
   return (
     <div className="w-full flex flex-col gap-0 py-5 pr-5">
-      <PageHeader category={"quản lý người dùng"} header={"Đăng tin mới"} />
-      <div className="w-full border"></div>
+      <PageHeader
+        category={"quản lý người dùng"}
+        header={"Đăng tin mới"}
+        fixed
+      />
+      <div className="w-full h-[93px]"></div>
       <form
         onSubmit={handleSubmit(handleCreatePost)}
         className="flex flex-col gap-5 pt-5"

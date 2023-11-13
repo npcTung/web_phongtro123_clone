@@ -16,7 +16,7 @@ const Member = ({ navigate }) => {
     ).then(() => navigate(`/${path.LOGIN}`));
 
   return (
-    <div id="memder" className="w-full grid grid-cols-10 gap-5">
+    <div id="member" className="w-full grid grid-cols-10 gap-5">
       <SideBarMember data={currentData} />
       <div className="col-span-2"></div>
       <main id="main-member" className="col-span-8">

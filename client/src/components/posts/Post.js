@@ -110,7 +110,7 @@ const Post = ({ data }) => {
           </tbody>
         </table>
       </div>
-      <div className="flex flex-col gap-3 px-5">
+      <div className="flex flex-col gap-3 p-5">
         <h3 className="text-xl font-semibold">Đặc điểm tin đăng</h3>
         <table className="table table-zebra">
           <tbody>

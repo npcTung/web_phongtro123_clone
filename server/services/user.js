@@ -33,9 +33,7 @@ const updateUser = (payload, id) =>
   new Promise(async (resolve, reject) => {
     try {
       const user = await db.User.findOne({ where: { id } });
-      const response = await db.User.update(payload, {
-        where: { id },
-      });
+      const response = await db.User.update({ ...payload }, { where: { id } });
       if (payload.avatar && response[0] <= 0)
         cloudinary.uploader.destroy(payload.filename);
       if (payload.avatar && response[0] > 0 && user.avatar)
@@ -108,7 +106,9 @@ const deleteUserService = (uid) =>
           await db.Attribute.destroy({ where: { id: el.attributesId } });
           await db.Overview.destroy({ where: { id: el.overviewId } });
           cloudinary.uploader.destroy(el.user?.filenameAvatar);
-          cloudinary.api.delete_resources(el?.fileNameImages?.map((el) => el));
+          cloudinary.api.delete_resources(
+            JSON.parse(el?.fileNameImages)?.map((el) => el)
+          );
         });
       }
       resolve({

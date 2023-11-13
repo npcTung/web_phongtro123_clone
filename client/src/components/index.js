@@ -26,6 +26,7 @@ export { default as PagiItem } from "./pagination/PagiItem";
 // sidebar
 export { default as ItemSidebar } from "./sidebar/ItemSidebar";
 export { default as SideBarMember } from "./sidebar/SideBarMember";
+export { default as SiderBarAdmin } from "./sidebar/SiderBarAdmin";
 // footer
 export { default as TopFooter } from "./footers/TopFooter";
 export { default as Footer } from "./footers/Footer";
@@ -36,6 +37,9 @@ export { default as InputForm } from "./inputs/InputForm";
 export { default as Select } from "./inputs/Select";
 export { default as InputImages } from "./inputs/InputImages";
 export { default as MarkDownEditer } from "./inputs/MarkDownEditer";
+export { default as Avatar } from "./inputs/Avatar";
 // auth
 export { default as FinalRegister } from "./auth/FinalRegister";
 export { default as ForgotPassword } from "./auth/ForgotPassword";
+// user
+export { default as UpdateUserByAdmin } from "./user/UpdateUserByAdmin";

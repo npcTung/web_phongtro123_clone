@@ -6,6 +6,7 @@ import {
   Button,
   InputForm,
   InputImages,
+  Loading,
   MarkDownEditer,
   Select,
 } from "components";
@@ -29,6 +30,9 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
   const { currentData } = useSelector((state) => state.user);
   const [preview, setPreview] = useState({ images: [] });
   const [address, setAddress] = useState(null);
+  const [provinceId, setProvinceId] = useState(null);
+  const [districtId, setDistrictId] = useState(null);
+  const [wardId, setWardId] = useState(null);
   const {
     handleSubmit,
     register,
@@ -66,18 +70,46 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
     setAddress(null);
   };
 
-  const handleUpdatePost = (data) => {
-    // const invalids = validate(payload, setInvalidFields);
+  const handleUpdatePost = async (data) => {
+    console.log(payload);
+    const invalids = validate(payload, setInvalidFields);
     if (data.number || data.district || data.province)
       data.address = `Địa chỉ: ${address?.number ? `${address?.number},` : ""}${
         address?.ward ? `${address?.ward},` : ""
       }${address?.district ? `${address?.district},` : ""}${
         address?.province ? `${address?.province}` : ""
       }`;
-    // if (invalids === 0) {
-    const finalPayload = { ...data, payload };
-    console.log(finalPayload);
-    // }
+    if (invalids === 0) {
+      const finalPayload = { ...data, ...payload };
+      finalPayload.categoryCode = data.category;
+      finalPayload.province = address?.province;
+      finalPayload.label = `${
+        categories?.find((el) => el.code === data.category).value
+      } ${address?.district}`;
+      finalPayload.target = data.target;
+      finalPayload.type = categories?.find(
+        (el) => el.code === data.category
+      ).value;
+      delete finalPayload.name;
+      delete finalPayload.phone;
+      delete finalPayload.ward;
+      delete finalPayload.district;
+      delete finalPayload.category;
+      delete finalPayload.number;
+      const formData = new FormData();
+      for (let i of Object.entries(finalPayload)) formData.append(i[0], i[1]);
+      finalPayload.images =
+        data.images?.length === 0 ? preview.images : data.images;
+      console.log(finalPayload);
+      for (let image of finalPayload.images) formData.append("images", image);
+      dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
+      const response = await apis.apiUpdatePost(dataPost.id, formData);
+      dispatch(showModal({ isShowModal: false, modalChildren: null }));
+      if (response.success) toast.success("Sửa sản phẩm thành công");
+      else toast.error(response.mes);
+      resetData();
+      rerender();
+    }
   };
 
   const handlePreviewImages = async (files) => {
@@ -101,25 +133,43 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
   };
 
   useEffect(() => {
-    const dataAddress = dataPost?.address?.split(":");
+    const dataAddress = dataPost?.address?.split(":")[1]?.split(",");
+    if (dataPost && provincesData)
+      setProvinceId(
+        provincesData?.find((el) => el.province_name === dataPost?.province)
+          ?.province_id
+      );
+    if (dataPost && districtData)
+      setDistrictId(
+        districtData?.find((el) => el.district_name === dataAddress[2])
+          ?.district_id
+      );
+    if (dataPost && wardData)
+      setWardId(
+        wardData?.find((el) => el.ward_name === dataAddress[1])?.ward_id
+      );
+  }, [dataPost, provincesData, districtData, wardData]);
+
+  useEffect(() => {
+    const dataAddress = dataPost?.address?.split(":")[1]?.split(",")[0];
     const description = JSON.parse(dataPost && dataPost?.description);
-    const province = provincesData?.find(
-      (el) => el.province_name === dataPost?.province
-    )?.province_id;
     reset({
       title: dataPost?.title,
-      number: dataAddress[1]?.split(",")[0],
+      number: dataAddress.split(" ")[dataAddress.split(" ").length - 1],
       price: dataPost?.attributes?.price.split("triệu/tháng")[0],
       acreage: dataPost?.attributes?.acreage.split("m2")[0],
-      province,
+      province: provinceId,
+      district: districtId,
+      ward: wardId,
       target: dataPost?.overviews?.target,
       category: dataPost?.categoryCode,
     });
-    setPayload(
-      description.length === 1 ? description[0] : description.join(", ")
-    );
+    setPayload({
+      description:
+        description.length === 1 ? description[0] : description.join(", "),
+    });
     setPreview({ images: JSON?.parse(dataPost && dataPost?.images) });
-  }, [dataPost]);
+  }, [dataPost, provinceId, districtId, wardId]);
 
   useEffect(() => {
     if (watch("images") instanceof FileList && watch("images")?.length > 0)
@@ -186,6 +236,7 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
                   value: el.province_name,
                 }))}
                 wf
+                disabled
               />
               <Select
                 label={"Quận/Huyện"}
@@ -198,6 +249,7 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
                   value: el.district_name,
                 }))}
                 wf
+                disabled
               />
               <Select
                 label={"Phường/Xã"}
@@ -260,7 +312,7 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
                 changeValue={changeValue}
                 invalidFields={invalidFields}
                 setInvalidFields={setInvalidFields}
-                value={payload}
+                value={payload?.description}
               />
               <InputForm
                 label={"Thông tin liên hệ"}
@@ -317,10 +369,11 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
               register={register}
               errors={errors}
               preview={preview}
+              validate={{ required: "Điền thông tin bắt buộc." }}
             />
           </div>
           <Button
-            name={"Sửa sản phẩm mới"}
+            name={"Sửa sản phẩm"}
             wf
             styles={`text-white ${isDirty ? "btn-info" : "btn-disabled"}`}
             type="submit"

@@ -48,16 +48,15 @@ const getPostsLimitUser = asyncHandler(async (req, res) => {
 const updatePost = asyncHandler(async (req, res) => {
   const { pid } = req.params;
   const { id } = req.user;
-  const data = { ...req.body };
   if (!pid) {
     cloudinary.api.delete_resources(req.files?.map((el) => el.filename));
     throw new Error("Missing input");
   }
-  if (req?.files) {
-    data.images = req?.files?.images?.map((el) => el.path);
-    data.fileNameImages = req?.files?.images?.map((el) => el.filename);
+  if (req?.files?.images) {
+    req.body.images = req?.files?.images?.map((el) => el.path);
+    req.body.fileNameImages = req?.files?.images?.map((el) => el.filename);
   }
-  data.slug = slugify(data.title);
+  req.body.slug = slugify(req.body.title);
   const response = await postService.updatePostService(pid, id, req.body);
   return res.status(200).json(response);
 });

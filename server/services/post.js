@@ -44,7 +44,8 @@ const createNewPostService = (body, userId) =>
           created: currentDate.today,
           expired: currentDate.expiredDay,
         });
-      }
+      } else
+        cloudinary.api.delete_resources(body.fileNameImages?.map((el) => el));
       resolve({
         success: response ? true : false,
         mes: response ? "Created." : "Create failed",
@@ -71,6 +72,11 @@ const getPostsService = ({ page, limit, order, title, ...query }) =>
           model: db.User,
           as: "user",
           attributes: ["name", "zalo", "phone", "avatar", "isBlocked"],
+        },
+        {
+          model: db.Overview,
+          as: "overviews",
+          attributes: ["created", "expired", "target"],
         },
       ];
       queries.offset = offset * fLimit;
@@ -105,7 +111,7 @@ const getPostService = (pid) =>
         {
           model: db.User,
           as: "user",
-          attributes: ["name", "zalo", "phone"],
+          attributes: ["name", "zalo", "phone", "avatar"],
         },
         {
           model: db.Overview,
@@ -211,6 +217,9 @@ const updatePostService = (pid, uid, { ...body }) =>
     try {
       let description = body.description?.split(",");
       const post = await db.Post.findOne({ where: { id: pid } });
+      const images = JSON.parse(
+        post && post.fileNameImages && post.fileNameImages
+      );
       if (post.userId === uid) {
         const attributesId = post.attributesId;
         const overviewId = post.overviewId;
@@ -218,13 +227,13 @@ const updatePostService = (pid, uid, { ...body }) =>
           {
             title: body.title,
             slug: body.slug,
-            address: body.address || null,
+            address: body.address,
             categoryCode: body.categoryCode,
-            description: JSON.stringify(description) || null,
-            images: body.images || null,
-            fileNameImages: body.fileNameImages || null,
+            description: JSON.stringify(description),
+            images: JSON.stringify(body.images),
+            fileNameImages: JSON.stringify(body.fileNameImages),
             province: body?.province,
-            lable: body?.label || null,
+            lable: body?.label,
           },
           { where: { id: pid } }
         );
@@ -245,9 +254,7 @@ const updatePostService = (pid, uid, { ...body }) =>
             { where: { id: overviewId } }
           );
           if (post.fileNameImages && body.fileNameImages)
-            cloudinary.api.delete_resources(
-              post?.fileNameImages?.map((el) => el)
-            );
+            cloudinary.api.delete_resources(images?.map((el) => el));
         } else
           cloudinary.api.delete_resources(body.fileNameImages?.map((el) => el));
         resolve({
