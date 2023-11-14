@@ -41,14 +41,15 @@ function App({ dispatch }) {
         <Route path={path.LOGIN} element={<Login />} />
         <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
         <Route path={path.ADMIN} element={<Admin />}>
+          <Route path={path.ALL} element={<DashBoard />} />
           <Route path={path.DASH_BOARD} element={<DashBoard />} />
           <Route path={path.MANAGE_USER} element={<ManageUser />} />
           <Route path={path.MANAGE_POST} element={<ManagePostAdmin />} />
         </Route>
         <Route path={path.MEMBER} element={<Member />}>
-          <Route path={path.EDIT_ACCOUNT} element={<Account />} />
           <Route path={path.ALL} element={<ManagePost />} />
           <Route path={path.MANAGE_POST} element={<ManagePost />} />
+          <Route path={path.EDIT_ACCOUNT} element={<Account />} />
           <Route path={path.CREATE_POST} element={<CreatePost />} />
         </Route>
       </Routes>

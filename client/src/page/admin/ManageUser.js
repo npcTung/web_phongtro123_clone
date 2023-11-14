@@ -132,9 +132,12 @@ const ManageUser = ({ dispatch }) => {
                     </Link>
                   </td>
                   <td>
-                    <span className="whitespace-nowrap line-clamp-1">
+                    <Link
+                      to={`mailto:${el?.email}`}
+                      className="whitespace-nowrap line-clamp-1 hover:underline hover:text-main-blue transition-all"
+                    >
                       {el?.email}
-                    </span>
+                    </Link>
                   </td>
                   <td>
                     <Link

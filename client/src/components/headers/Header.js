@@ -63,22 +63,26 @@ const Header = ({ navigate, dispatch }) => {
                 >{`MTK: ${currentData?.id}`}</span>
               </div>
             </Link>
-            <div className="flex items-center gap-1 hover:underline cursor-pointer">
+            <div className="flex items-center gap-1 cursor-pointer">
               <PiHeartStraight />
-              <span>Yêu thích</span>
+              <span className="hover:underline hover:text-main-blue">
+                Yêu thích
+              </span>
             </div>
             <div
-              className="flex items-center gap-1 hover:underline cursor-pointer relative"
+              className="flex items-center gap-1 cursor-pointer relative"
               onClick={onShowMenu}
             >
               <GrAppsRounded />
-              <span>Quản lý tài khoản</span>
+              <span className="hover:underline hover:text-main-blue">
+                Quản lý tài khoản
+              </span>
               {isShowMenu && (
                 <div className="absolute z-10 w-[200px] top-7 p-4 shadow-lg rounded-lg bg-white flex flex-col gap-2">
                   {menuManage.map((item) => {
                     return (
                       <Link
-                        className="hover:underline flex items-center gap-2"
+                        className="hover:underline hover:text-main-orange flex items-center gap-2"
                         key={item?.id}
                         to={`/${path.MEMBER}/${item?.path}`}
                         target="_blank"
@@ -91,7 +95,7 @@ const Header = ({ navigate, dispatch }) => {
                   {+currentData?.role === 2002 && (
                     <Link
                       to={`/${path.ADMIN}/${path.DASH_BOARD}`}
-                      className="hover:underline flex items-center gap-2"
+                      className="hover:underline hover:text-main-orange flex items-center gap-2"
                       target="_blank"
                     >
                       <GrUserAdmin />
@@ -99,7 +103,7 @@ const Header = ({ navigate, dispatch }) => {
                     </Link>
                   )}
                   <span
-                    className="cursor-pointer hover:underline flex items-center gap-2"
+                    className="cursor-pointer hover:underline hover:text-main-orange flex items-center gap-2"
                     onClick={() => {
                       dispatch(logout());
                       setIsShowMenu(false);
@@ -115,14 +119,14 @@ const Header = ({ navigate, dispatch }) => {
         ) : (
           <>
             <span
-              className="flex gap-1 items-center hover:underline cursor-pointer transition-all"
+              className="flex gap-1 items-center hover:underline hover:text-main-orange cursor-pointer transition-all"
               onClick={() => goLogin(false)}
             >
               <AiOutlineUserAdd />
               <span>đăng nhập</span>
             </span>
             <span
-              className="flex gap-1 items-center hover:underline cursor-pointer transition-all"
+              className="flex gap-1 items-center hover:underline hover:text-main-orange cursor-pointer transition-all"
               onClick={() => goLogin(true)}
             >
               <IoIosLogIn />
