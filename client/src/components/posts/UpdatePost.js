@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import * as apis from "apis";
 import { toast } from "react-toastify";
 import { getBase64, validate } from "ultils/helpers";
+import data from "data/db.json";
 
 const { MdOutlineClear } = icons;
 
@@ -41,21 +42,6 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
     watch,
   } = useForm();
 
-  const fetchProvinces = async () => {
-    const response = await apis.apiGetProvince();
-    if (response.data.results) setProvincesData(response.data.results);
-  };
-
-  const fetchDistrict = async (provinceId) => {
-    const response = await apis.apiGetDistrict(provinceId);
-    if (response.data.results) setDistrictData(response.data.results);
-  };
-
-  const fetchWard = async (districtId) => {
-    const response = await apis.apiGetWard(districtId);
-    if (response.data.results) setWardData(response.data.results);
-  };
-
   const changeValue = useCallback(
     (e) => {
       setPayload(e);
@@ -71,7 +57,6 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
   };
 
   const handleUpdatePost = async (data) => {
-    console.log(payload);
     const invalids = validate(payload, setInvalidFields);
     if (data.number || data.district || data.province)
       data.address = `Địa chỉ: ${address?.number ? `${address?.number},` : ""}${
@@ -100,7 +85,6 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
       for (let i of Object.entries(finalPayload)) formData.append(i[0], i[1]);
       finalPayload.images =
         data.images?.length === 0 ? preview.images : data.images;
-      console.log(finalPayload);
       for (let image of finalPayload.images) formData.append("images", image);
       dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
       const response = await apis.apiUpdatePost(dataPost.id, formData);
@@ -136,18 +120,14 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
     const dataAddress = dataPost?.address?.split(":")[1]?.split(",");
     if (dataPost && provincesData)
       setProvinceId(
-        provincesData?.find((el) => el.province_name === dataPost?.province)
-          ?.province_id
+        provincesData?.find((el) => el.name === dataPost?.province)?.idProvince
       );
     if (dataPost && districtData)
       setDistrictId(
-        districtData?.find((el) => el.district_name === dataAddress[2])
-          ?.district_id
+        districtData?.find((el) => el.name === dataAddress[2])?.idDistrict
       );
     if (dataPost && wardData)
-      setWardId(
-        wardData?.find((el) => el.ward_name === dataAddress[1])?.ward_id
-      );
+      setWardId(wardData?.find((el) => el.name === dataAddress[1])?.idCommune);
   }, [dataPost, provincesData, districtData, wardData]);
 
   useEffect(() => {
@@ -177,21 +157,25 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
   }, [watch("images")]);
 
   useEffect(() => {
-    fetchProvinces();
-    if (watch("province")) fetchDistrict(watch("province"));
-    if (watch("district")) fetchWard(watch("district"));
+    setProvincesData(data.province);
+    if (watch("province"))
+      setDistrictData(
+        data.district.filter((el) => el.idProvince === watch("province"))
+      );
+    if (watch("district"))
+      setWardData(
+        data.commune.filter((el) => el.idDistrict === watch("district"))
+      );
   }, [watch("province"), watch("district")]);
 
   useEffect(() => {
     const province = provincesData?.find(
-      (el) => el.province_id === watch("province")
-    )?.province_name;
+      (el) => el.idProvince === watch("province")
+    )?.name;
     const district = districtData?.find(
-      (el) => el.district_id === watch("district")
-    )?.district_name;
-    const ward = wardData?.find(
-      (el) => el.ward_id === watch("ward")
-    )?.ward_name;
+      (el) => el.idDistrict === watch("district")
+    )?.name;
+    const ward = wardData?.find((el) => el.idCommune === watch("ward"))?.name;
     setAddress({
       number: watch("number") || "",
       province: province || "",
@@ -232,8 +216,8 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
                 validate={{ required: "Điền thông tin bắt buộc." }}
                 errors={errors}
                 options={provincesData?.map((el) => ({
-                  code: el.province_id,
-                  value: el.province_name,
+                  code: el.idProvince,
+                  value: el.name,
                 }))}
                 wf
                 disabled
@@ -245,8 +229,8 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
                 validate={{ required: "Điền thông tin bắt buộc." }}
                 errors={errors}
                 options={districtData?.map((el) => ({
-                  code: el.district_id,
-                  value: el.district_name,
+                  code: el.idDistrict,
+                  value: el.name,
                 }))}
                 wf
                 disabled
@@ -257,8 +241,8 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
                 register={register}
                 errors={errors}
                 options={wardData?.map((el) => ({
-                  code: el.ward_id,
-                  value: el.ward_name,
+                  code: el.idCommune,
+                  value: el.name,
                 }))}
                 wf
               />

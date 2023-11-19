@@ -16,7 +16,7 @@ module.exports = {
       images: { type: Sequelize.TEXT("long") },
       fileNameImages: { type: Sequelize.TEXT("long") },
       label: { type: Sequelize.STRING },
-      province: { type: Sequelize.STRING },
+      provinceCode: { type: Sequelize.STRING },
       createdAt: {
         allowNull: false,
         type: "TIMESTAMP",

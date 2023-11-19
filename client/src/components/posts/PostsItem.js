@@ -4,7 +4,7 @@ import { PostItem } from "components";
 import * as apis from "apis";
 import { useSearchParams } from "react-router-dom";
 
-const PostsItem = ({ categoryCode }) => {
+const PostsItem = ({ categoryCode, provinceCode }) => {
   const [params] = useSearchParams();
   const [sort, setSort] = useState(0);
   const [posts, setPosts] = useState(null);
@@ -20,9 +20,11 @@ const PostsItem = ({ categoryCode }) => {
     else delete queries.order;
     if (categoryCode) queries.categoryCode = categoryCode;
     else delete queries.categoryCode;
+    if (provinceCode) queries.provinceCode = provinceCode;
+    else delete queries.provinceCode;
     fetchProducts(queries);
     window.scrollTo(0, 0);
-  }, [sort, params, categoryCode]);
+  }, [sort, params, categoryCode, provinceCode]);
 
   return (
     <div className="col-span-7 bg-white rounded-md py-4 flex flex-col gap-5 shadow-md">

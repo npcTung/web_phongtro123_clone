@@ -31,15 +31,10 @@ const Account = ({ dispatch }) => {
     dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
     const response = await apis.apiUpdateUser(formData);
     dispatch(showModal({ isShowModal: false, modalChildren: null }));
-    if (response.success)
-      Swal.fire(
-        "Successfully",
-        "Cập nhật tài khoản thành công",
-        "success"
-      ).then(() => {
-        dispatch(getCurrent());
-      });
-    else toast.error(response.mes);
+    if (response.success) {
+      toast.success("Cập nhập tài khoản thành công");
+      dispatch(getCurrent());
+    } else toast.error(response.mes);
   };
 
   const handleAvatar = async (file) => {

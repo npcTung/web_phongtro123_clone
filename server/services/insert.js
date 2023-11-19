@@ -7,7 +7,7 @@ const chothuephongtro = require("../data/chothuephongtro.json");
 const nhachothue = require("../data/nhachothue.json");
 const categotries = require("../data/categories");
 const slugify = require("slugify");
-const categoryCode = require("../ultils/common");
+const { categoryCode, generateCode } = require("../ultils/common");
 
 const dataBody = [
   {
@@ -41,12 +41,21 @@ const handleEmail = (value) =>
 const insertServices = () =>
   new Promise(async (resolve, reject) => {
     try {
+      const provinceCodes = [];
       dataBody.forEach((cate) => {
         cate.body.forEach(async (item) => {
           let postId = v4();
           let attributesId = v4();
           let userId = v4();
           let overviewId = v4();
+          let provinceCode = generateCode(
+            item?.header?.address?.split(",").slice(-1)[0]
+          ).trim();
+          provinceCodes?.every((item) => item?.code !== provinceCode) &&
+            provinceCodes.push({
+              code: provinceCode,
+              value: item?.header?.address?.split(",").slice(-1)[0].trim(),
+            });
 
           await db.Post.create({
             id: postId,
@@ -61,7 +70,7 @@ const insertServices = () =>
             overviewId,
             images: JSON.stringify(item?.images),
             label: item?.header?.class?.classType.trim(),
-            province: item?.header?.address?.split(",").slice(-1)[0].trim(),
+            provinceCode,
           });
           await db.Attribute.create({
             id: attributesId,
@@ -106,6 +115,10 @@ const insertServices = () =>
           });
         });
       });
+      provinceCodes?.forEach(async (item) => {
+        await db.Province.create(item);
+      });
+
       resolve("Done Post.");
     } catch (err) {
       reject(err);

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ItemSidebar,
+  ItemSidebarProvince,
   PageHeader,
   PostsItem,
   Province,
@@ -12,6 +13,7 @@ import { createSlug } from "ultils/helpers";
 
 const Posts = ({ location }) => {
   const { categories } = useSelector((state) => state.app);
+  const [provinceCode, setProvinceCode] = useState(null);
   const title = location.pathname.split("/")[1];
   return (
     <div className="w-main mx-auto flex flex-col gap-5">
@@ -32,9 +34,15 @@ const Posts = ({ location }) => {
           categoryCode={
             categories?.find((el) => createSlug(el.value) === title)?.code
           }
+          provinceCode={provinceCode}
         />
         <div className="col-span-3 flex flex-col gap-5">
           <ItemSidebar content={categories} title="Danh sách cho thuê" />
+          <ItemSidebarProvince
+            title="Danh sách tỉnh"
+            provinceCode={provinceCode}
+            setProvinceCode={setProvinceCode}
+          />
           <RelatedPost
             categoryCode={
               categories?.find((el) => createSlug(el.value) === title)?.code

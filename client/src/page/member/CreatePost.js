@@ -15,6 +15,7 @@ import { getBase64, validate } from "ultils/helpers";
 import { toast } from "react-toastify";
 import withBase from "hocs/withBase";
 import { showModal } from "store/app/appSlice";
+import data from "data/db.json";
 
 const targetData = ["Tất cả", "Nam", "Nữ"];
 
@@ -35,21 +36,6 @@ const CreatePost = ({ dispatch }) => {
     reset,
     watch,
   } = useForm();
-
-  const fetchProvinces = async () => {
-    const response = await apis.apiGetProvince();
-    if (response.data.results) setProvincesData(response.data.results);
-  };
-
-  const fetchDistrict = async (provinceId) => {
-    const response = await apis.apiGetDistrict(provinceId);
-    if (response.data.results) setDistrictData(response.data.results);
-  };
-
-  const fetchWard = async (districtId) => {
-    const response = await apis.apiGetWard(districtId);
-    if (response.data.results) setWardData(response.data.results);
-  };
 
   const changeValue = useCallback(
     (e) => {
@@ -134,21 +120,25 @@ const CreatePost = ({ dispatch }) => {
   }, [watch("images")]);
 
   useEffect(() => {
-    fetchProvinces();
-    if (watch("province")) fetchDistrict(watch("province"));
-    if (watch("district")) fetchWard(watch("district"));
+    setProvincesData(data.province);
+    if (watch("province"))
+      setDistrictData(
+        data.district.filter((el) => el.idProvince === watch("province"))
+      );
+    if (watch("district"))
+      setWardData(
+        data.commune.filter((el) => el.idDistrict === watch("district"))
+      );
   }, [watch("province"), watch("district")]);
 
   useEffect(() => {
     const province = provincesData?.find(
-      (el) => el.province_id === watch("province")
-    )?.province_name;
+      (el) => el.idProvince === watch("province")
+    )?.name;
     const district = districtData?.find(
-      (el) => el.district_id === watch("district")
-    )?.district_name;
-    const ward = wardData?.find(
-      (el) => el.ward_id === watch("ward")
-    )?.ward_name;
+      (el) => el.idDistrict === watch("district")
+    )?.name;
+    const ward = wardData?.find((el) => el.idCommune === watch("ward"))?.name;
     setAddress({
       number: watch("number") || "",
       province: province || "",
@@ -179,8 +169,8 @@ const CreatePost = ({ dispatch }) => {
               validate={{ required: "Điền thông tin bắt buộc." }}
               errors={errors}
               options={provincesData?.map((el) => ({
-                code: el.province_id,
-                value: el.province_name,
+                code: el.idProvince,
+                value: el.name,
               }))}
               wf
             />
@@ -191,8 +181,8 @@ const CreatePost = ({ dispatch }) => {
               validate={{ required: "Điền thông tin bắt buộc." }}
               errors={errors}
               options={districtData?.map((el) => ({
-                code: el.district_id,
-                value: el.district_name,
+                code: el.idDistrict,
+                value: el.name,
               }))}
               wf
             />
@@ -203,8 +193,8 @@ const CreatePost = ({ dispatch }) => {
               validate={{ required: "Điền thông tin bắt buộc." }}
               errors={errors}
               options={wardData?.map((el) => ({
-                code: el.ward_id,
-                value: el.ward_name,
+                code: el.idCommune,
+                value: el.name,
               }))}
               wf
             />

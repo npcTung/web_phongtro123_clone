@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Province,
   PageHeader,
   PostsItem,
   ItemSidebar,
   RelatedPost,
+  ItemSidebarProvince,
 } from "components";
 import { useSelector } from "react-redux";
 
 const Home = () => {
   const { categories } = useSelector((state) => state.app);
+  const [provinceCode, setProvinceCode] = useState(null);
 
   return (
     <div className="w-full flex flex-col gap-5">
@@ -21,9 +23,14 @@ const Home = () => {
       />
       <Province />
       <div className="w-full grid grid-cols-10 gap-5">
-        <PostsItem />
+        <PostsItem provinceCode={provinceCode} />
         <div className="col-span-3 flex flex-col gap-5">
           <ItemSidebar content={categories} title="Danh sách cho thuê" />
+          <ItemSidebarProvince
+            title="Danh sách tỉnh"
+            provinceCode={provinceCode}
+            setProvinceCode={setProvinceCode}
+          />
           <RelatedPost cate={"Tin mới đăng"} />
         </div>
       </div>

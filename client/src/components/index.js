@@ -27,6 +27,7 @@ export { default as PagiItem } from "./pagination/PagiItem";
 export { default as ItemSidebar } from "./sidebar/ItemSidebar";
 export { default as SideBarMember } from "./sidebar/SideBarMember";
 export { default as SiderBarAdmin } from "./sidebar/SiderBarAdmin";
+export { default as ItemSidebarProvince } from "./sidebar/ItemSidebarProvince";
 // footer
 export { default as TopFooter } from "./footers/TopFooter";
 export { default as Footer } from "./footers/Footer";

@@ -1,6 +1,6 @@
 const db = require("../models");
 const generatedId = require("uuid").v4;
-const generateDate = require("../ultils/generateDate");
+const { generateDate, generateCode } = require("../ultils/common");
 const cloudinary = require("cloudinary").v2;
 const { Op } = require("sequelize");
 
@@ -12,6 +12,10 @@ const createNewPostService = (body, userId) =>
       let hashtag = Math.floor(Math.random() * Math.pow(10, 6));
       let currentDate = generateDate();
       let description = body.description?.split(",");
+      let province = {
+        code: generateCode(body.province).trim(),
+        value: body.province,
+      };
       const response = await db.Post.create({
         id: generatedId(),
         title: body.title,
@@ -24,7 +28,7 @@ const createNewPostService = (body, userId) =>
         images: JSON.stringify(body.images),
         fileNameImages: JSON.stringify(body.fileNameImages),
         label: body.label,
-        province: body.province,
+        provinceCode: province.code,
         overviewId,
       });
       if (response) {
@@ -43,6 +47,10 @@ const createNewPostService = (body, userId) =>
           bonus: "Tin thường",
           created: currentDate.today,
           expired: currentDate.expiredDay,
+        });
+        await db.Province.findOrCreate({
+          where: { code: province.code },
+          defaults: province,
         });
       } else
         cloudinary.api.delete_resources(body.fileNameImages?.map((el) => el));
@@ -216,6 +224,10 @@ const updatePostService = (pid, uid, { ...body }) =>
   new Promise(async (resolve, reject) => {
     try {
       let description = body.description?.split(",");
+      let province = {
+        code: generateCode(body.province).trim(),
+        value: body.province,
+      };
       const post = await db.Post.findOne({ where: { id: pid } });
       const images = JSON.parse(
         post && post.fileNameImages && post.fileNameImages
@@ -232,7 +244,7 @@ const updatePostService = (pid, uid, { ...body }) =>
             description: JSON.stringify(description),
             images: JSON.stringify(body.images),
             fileNameImages: JSON.stringify(body.fileNameImages),
-            province: body?.province,
+            provinceCode: province.code,
             lable: body?.label,
           },
           { where: { id: pid } }

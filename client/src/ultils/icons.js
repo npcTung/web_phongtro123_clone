@@ -31,6 +31,7 @@ import { BiTime, BiSolidMessageSquareEdit } from "react-icons/bi";
 import { ImPhone } from "react-icons/im";
 import { SiZalo } from "react-icons/si";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { IoCloseCircleSharp } from "react-icons/io5";
 
 const icons = {
   PiHeartStraight,
@@ -64,6 +65,7 @@ const icons = {
   AiOutlineDashboard,
   FaArrowUpWideShort,
   FaArrowDownShortWide,
+  IoCloseCircleSharp,
 };
 
 export default icons;

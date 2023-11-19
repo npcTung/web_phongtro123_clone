@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       images: DataTypes.TEXT,
       fileNameImages: DataTypes.TEXT,
       label: DataTypes.STRING,
-      province: DataTypes.STRING,
+      provinceCode: DataTypes.STRING,
     },
     { sequelize, modelName: "Post" }
   );
