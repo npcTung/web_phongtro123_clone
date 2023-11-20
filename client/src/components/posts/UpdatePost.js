@@ -120,7 +120,7 @@ const UpdatePost = ({ dispatch, dataPost, rerender }) => {
     const dataAddress = dataPost?.address?.split(":")[1]?.split(",");
     if (dataPost && provincesData)
       setProvinceId(
-        provincesData?.find((el) => el.name === dataPost?.province)?.idProvince
+        provincesData?.find((el) => el.name === dataAddress[3])?.idProvince
       );
     if (dataPost && districtData)
       setDistrictId(
