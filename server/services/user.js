@@ -2,7 +2,6 @@ const db = require("../models");
 const cloudinary = require("cloudinary").v2;
 const { Op } = require("sequelize");
 
-//GET CURRENT
 const getCurrent = (id) =>
   new Promise(async (resolve, reject) => {
     try {

@@ -13,7 +13,6 @@ const {
   AiOutlineUserAdd,
   IoIosLogIn,
   AiOutlinePlusCircle,
-  PiHeartStraight,
   GrAppsRounded,
   BsBoxArrowInLeft,
   GrUserAdmin,
@@ -63,12 +62,6 @@ const Header = ({ navigate, dispatch }) => {
                 >{`MTK: ${currentData?.id}`}</span>
               </div>
             </Link>
-            <div className="flex items-center gap-1 cursor-pointer">
-              <PiHeartStraight />
-              <span className="hover:underline hover:text-main-blue">
-                Yêu thích
-              </span>
-            </div>
             <div
               className="flex items-center gap-1 cursor-pointer relative"
               onClick={onShowMenu}

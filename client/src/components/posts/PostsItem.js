@@ -3,6 +3,7 @@ import { Pagination, SortPost } from "components";
 import { PostItem } from "components";
 import * as apis from "apis";
 import { useSearchParams } from "react-router-dom";
+import noProduct from "assets/no-product.png";
 
 const PostsItem = ({ categoryCode, provinceCode }) => {
   const [params] = useSearchParams();
@@ -30,9 +31,17 @@ const PostsItem = ({ categoryCode, provinceCode }) => {
     <div className="col-span-7 bg-white rounded-md py-4 flex flex-col gap-5 shadow-md">
       <SortPost sort={sort} setSort={setSort} />
       <div className="w-full">
-        {posts?.rows?.map((el) => (
-          <PostItem key={el.id} data={el} />
-        ))}
+        {+posts?.count > 0 ? (
+          posts?.rows?.map((el) => <PostItem key={el.id} data={el} />)
+        ) : (
+          <div className="w-full h-screen flex justify-center items-center">
+            <img
+              src={noProduct}
+              alt="No Product"
+              className="w-full h-full object-contain"
+            />
+          </div>
+        )}
       </div>
       {+posts?.count >= +process.env.REACT_APP_LIMIT && (
         <Pagination
